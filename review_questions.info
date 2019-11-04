@@ -1,0 +1,6 @@
+name = Skvare Review Questions
+description = Example written by cfgregory.com for Skvare interview 
+core = 7.x
+package = field_collection 
+dependencies[] = field_collection:field_collection  
+configure = admin/configure/review-questions

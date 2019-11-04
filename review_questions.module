@@ -1,0 +1,144 @@
+<?php
+
+
+
+/**
+ * Implements hook_install()
+ */
+function review_questions_install(){
+    review_questions_create_field_collection();
+}
+
+ 
+function review_questions_create_field_collection($node_type = '') {
+   
+    
+    if($node_type == ''){
+        $node_type = 'node';
+    }
+   
+   $fields_array = array(
+    array(
+      'field' => array(
+        'field_name' => 'field_review_questions',
+        'label' => t('Review Questions'),
+        'cardinality' => -1,
+        'type' => 'field_collection',
+      ),
+      'instance' => array(
+        'field_name' => 'field_review_questions',
+        'entity_type' => 'node',
+        'bundle' => $node_type,
+        'label' => t('Review Questions'),
+        'description' => '',
+        'widget' => array('type' => 'field_collection_embed'),
+      ),
+    ),
+    array(
+      'field' => array(
+        'field_name' => 'field_question',
+        'type' => 'text_long',
+        'label' => 'Question',
+        'cardinality' => 1,
+         'translatable' => FALSE,
+      ),
+      'instance' => array(
+        'field_name' => 'field_question',
+        'entity_type' => 'field_collection_item',
+        'bundle' => 'field_review_questions',
+        'label' => 'Question',
+        'cardinality' => 1,
+        'description' => '',
+        'widget' => array('type' => 'text_textarea'),
+        
+      )
+    ),
+    array(
+      'field' => array(
+        'field_name' => 'field_showquestion',
+        'type' => 'list_boolean',
+        'label' => 'Show Question?',
+         'translatable' => FALSE,
+      ),
+      'instance' => array(
+        'field_name' => 'field_showquestion',
+        'entity_type' => 'field_collection_item',
+        'bundle' => 'field_review_questions',
+        'label' => 'Show Question?',
+        'description' => '',
+        'widget' => array('type' => 'options_onoff'),
+        
+      )
+    ),
+  );
+  
+  // Loop through fields array and create field and instance
+  foreach ($fields_array as $field) {
+    // Check if field already exists
+    if (!field_info_field($field['field']['field_name'])) {
+      field_create_field($field['field']);
+    }
+
+    // Check if instance exists
+    
+    if (!field_info_instance($field['instance']['entity_type'], $field['instance']['field_name'], $field['instance']['bundle'])) {
+      field_create_instance($field['instance']);
+    } else {
+        field_update_instance($field['instance']);
+    }
+  } 
+  }
+
+/**
+ * Implements hook_permission().
+ *
+ * Since the access to our new custom pages will be granted based on
+ * special permissions, we need to define what those permissions are here.
+ * This ensures that they are available to enable on the user role
+ * administration pages.
+ */
+function review_questions_permission() {
+  return array(
+    'administer review questions' => array(
+      'title' => t('Administer Review Questions'),
+      'description' => t('Allow people Administer Review Questions'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ *
+ * Here we set up the URLs (menu entries) for the
+ * form examples. Note that most of the menu items
+ * have page callbacks and page arguments set, with
+ * page arguments set to be functions in external files.
+ */
+function review_questions_menu() {
+  $items = array();
+  $items['admin/configure/review-questions'] = array(
+    'title' => 'Review Questions module settings',
+    'description' => 'Review Questions t which content types should include this functionality',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('review_questions_admin'),
+    'access arguments' => array('administer review questions'),
+    'file' => 'review_questions_form.inc',
+    'type' => MENU_NORMAL_ITEM,
+   );
+
+  return $items;
+}
+
+
+function randomName($max=6) {
+    $i = 0; //Reset the counter.
+    $possible_keys = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $keys_length = strlen($possible_keys);
+    $str = ""; //Let's declare the string, to add later.
+    while($i<$max) {
+        $rand = mt_rand(1,$keys_length-1);
+        $str.= $possible_keys[$rand];
+        $i++;
+    }
+    return $str;
+}

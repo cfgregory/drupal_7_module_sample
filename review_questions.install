@@ -1,0 +1,45 @@
+<?php
+
+
+function review_questions_schema(){
+
+
+$schema['review_questions_email_address'] = array(
+     'description' => 'review_questions_email_address',
+       'fields' => array(
+         'rqid' => array(
+           'description' => 'The primary identifier for review_questions_email.',
+           'type' => 'serial',
+           'unsigned' => TRUE,
+           'not null' => TRUE
+          ),         
+           'author_uid' => array(
+            'description' => 'User who created record',
+            'type' => 'int',
+            'unsigned' => TRUE,
+            'not null' => TRUE,
+            'default' => 0
+          ),          
+           'date' => array(
+             'description' => 'The Unix timestamp when the record is created.',
+             'type' => 'int',
+             'not null' => TRUE,
+             'default' => 0
+           ),
+           'content_type' => array(
+            'description' => 'content_type',
+            'type' => 'varchar',
+            'length' => 255,
+            'not null' => TRUE,
+          ), 
+          'email' => array(
+            'description' => 'email',
+            'type' => 'varchar',
+            'length' => 255,
+            'not null' => TRUE,
+          ), 
+           ),
+            'primary key' => array('rqid'),
+     );
+ return $schema;
+     }
